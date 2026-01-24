@@ -84,16 +84,64 @@
 
 ### Functional Requirements
 
-- **FR-001**: System MUST [specific capability, e.g., "allow users to create accounts"]
-- **FR-002**: System MUST [specific capability, e.g., "validate email addresses"]  
-- **FR-003**: Users MUST be able to [key interaction, e.g., "reset their password"]
-- **FR-004**: System MUST [data requirement, e.g., "persist user preferences"]
-- **FR-005**: System MUST [behavior, e.g., "log all security events"]
+<!--
+  CRITICAL: Write requirements that score high on quality metrics.
+  Each requirement MUST include these components for high scores:
+
+  1. TRIGGER (when/if): WHEN user clicks, IF validation fails, GIVEN condition
+  2. ACTOR (who): the system, the user, the admin
+  3. ACTION (what): MUST validate, MUST calculate, MUST display
+  4. OUTCOME (result): RETURN JSON, DISPLAY message, STORE data, EXIT with code
+  5. OBSERVABLE (verify): status codes, formats, error messages, logs
+  6. CONSTRAINT (limits): within 500ms, >= 0, ISO 8601 format, max 100 chars
+  7. BOUNDARY (must not): MUST NOT proceed, MUST NOT store, MUST NOT allow
+
+  ATOMIC RULE: One testable statement per FR. Split compound requirements.
+
+  Good pattern: [TRIGGER] the [ACTOR] MUST [ACTION] [OBJECT] and [OUTCOME] [OBSERVABLE]. [CONSTRAINT]. [BOUNDARY].
+-->
+
+#### [Feature Group 1] (FR-001 series)
+
+- **FR-001a**: WHEN a user submits the form, the system MUST validate the email format against RFC 5322 standard and RETURN a validation result object with `isValid` (boolean) and `errorMessage` (string) fields.
+
+- **FR-001b**: The validation process MUST complete within 200ms per request.
+
+- **FR-001c**: IF the email format is invalid, the system MUST DISPLAY an error message "Please enter a valid email address" and return HTTP status code 400.
+
+- **FR-001d**: The system MUST NOT store or process invalid email addresses.
+
+#### [Feature Group 2] (FR-002 series)
+
+- **FR-002a**: WHEN a user successfully logs in, the system MUST create a session token and RETURN it in the response body as a JSON object containing `token` (string), `expiresAt` (ISO 8601 timestamp), and `userId` (integer).
+
+- **FR-002b**: Session tokens MUST be valid for exactly 24 hours from creation time.
+
+- **FR-002c**: The system MUST NOT generate session tokens for unverified user accounts.
+
+#### [Feature Group 3] (FR-003 series)
+
+- **FR-003a**: Users MUST be able to reset their password by providing their email address.
+
+- **FR-003b**: WHEN a password reset is requested, the system MUST send a reset link to the provided email address within 30 seconds and LOG the event with timestamp, user ID, and IP address.
+
+- **FR-003c**: Password reset links MUST expire after 1 hour.
+
+- **FR-003d**: The system MUST NOT allow password reset for locked or deleted accounts.
+
+<!--
+  Example of atomic requirements for complex features:
+  Instead of: "System MUST validate data, store it, and send confirmation"
+  Split into:
+    - FR-004a: System MUST validate data
+    - FR-004b: System MUST store validated data
+    - FR-004c: System MUST send confirmation
+-->
 
 *Example of marking unclear requirements:*
 
-- **FR-006**: System MUST authenticate users via [NEEDS CLARIFICATION: auth method not specified - email/password, SSO, OAuth?]
-- **FR-007**: System MUST retain user data for [NEEDS CLARIFICATION: retention period not specified]
+- **FR-005**: The system MUST authenticate users via [NEEDS CLARIFICATION: auth method not specified - email/password, SSO, OAuth2?]
+- **FR-006**: User data MUST be retained for [NEEDS CLARIFICATION: retention period not specified - 90 days, 1 year, indefinitely?]
 
 ### Key Entities *(include if feature involves data)*
 

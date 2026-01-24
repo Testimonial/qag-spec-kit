@@ -90,7 +90,63 @@ Given that feature description, do this:
     4. Fill User Scenarios & Testing section
        If no clear user flow: ERROR "Cannot determine user scenarios"
     5. Generate Functional Requirements
-       Each requirement must be testable
+       Each requirement must be testable and score high on quality metrics.
+
+       **CRITICAL - Requirements Quality Standards**:
+
+       Every functional requirement MUST include these 7 components:
+
+       1. **TRIGGER** (when/if): Specify the condition that initiates the requirement
+          Examples: "WHEN user clicks submit", "IF validation fails", "GIVEN authenticated user"
+
+       2. **ACTOR** (who): Identify who/what performs the action
+          Examples: "the system", "the user", "the admin", "the API"
+
+       3. **ACTION** (what): State the action using strong modal verbs
+          Examples: "MUST validate", "MUST calculate", "MUST display", "MUST store"
+
+       4. **OUTCOME** (result): Specify what happens as a result
+          Examples: "RETURN JSON object", "DISPLAY error message", "STORE data", "EXIT with code"
+
+       5. **OBSERVABLE** (verify): Include observable elements for testing
+          Examples: status codes, response formats, error messages, log entries, timestamps
+
+       6. **CONSTRAINT** (limits): Add quantifiable constraints
+          Examples: "within 500ms", ">= 0", "ISO 8601 format", "max 100 characters"
+
+       7. **BOUNDARY** (must not): Define what must NOT happen
+          Examples: "MUST NOT proceed if", "MUST NOT store invalid", "MUST NOT allow access"
+
+       **ATOMIC REQUIREMENT RULE**:
+       - One testable statement per FR
+       - If a requirement contains "AND", split it into separate FRs
+       - Each FR must be independently testable
+       - Group related atomic FRs using series notation (FR-001a, FR-001b, etc.)
+
+       **High-Quality Pattern**:
+       ```
+       [TRIGGER] the [ACTOR] MUST [ACTION] [OBJECT] and [OUTCOME] [OBSERVABLE]. [CONSTRAINT]. [BOUNDARY].
+       ```
+
+       **Examples**:
+
+       ✅ GOOD (scores 0.75-0.85):
+       - **FR-001a**: WHEN a user submits a form, the system MUST validate the email format and RETURN a JSON response with `isValid` boolean within 200ms. The system MUST NOT store invalid email addresses.
+
+       ❌ BAD (scores 0.30-0.50):
+       - **FR-001**: System must validate email addresses.
+         (Missing: trigger, outcome, observable, constraint, boundary)
+
+       **Compound Requirement Splitting**:
+
+       Instead of:
+       - FR-001: System MUST validate data, store it in database, and send confirmation email
+
+       Split into atomic requirements:
+       - FR-001a: WHEN user submits data, the system MUST validate all required fields and RETURN validation result object
+       - FR-001b: IF validation succeeds, the system MUST store the data and RETURN a unique record ID
+       - FR-001c: After successful storage, the system MUST send a confirmation email within 30 seconds
+
        Use reasonable defaults for unspecified details (document assumptions in Assumptions section)
     6. Define Success Criteria
        Create measurable, technology-agnostic outcomes
